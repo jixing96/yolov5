@@ -14,6 +14,6 @@ test: imgs/test
 
 # Classes
 nc: 2  # number of classes
-names: ['negative_line',  'positive_line']  # class names
+names: ['positive_line', 'negative_line']  # class names
 
 
