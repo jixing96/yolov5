@@ -1,0 +1,19 @@
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
+# Example usage: python train.py --data Argoverse.yaml
+# └── parent
+#   └── yolov5
+# └── datasets
+#     └── powerlines_sim
+
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: ../../datasets/powerlines_sim  # dataset root dir
+train: images/train
+val: images/val
+test: imgs/test
+
+# Classes
+nc: 2  # number of classes
+names: ['negative_line',  'positive_line']  # class names
+
+
