@@ -16,7 +16,7 @@ from models.common import DetectMultiBackend
 from utils.datasets import IMG_FORMATS, VID_FORMATS
 from utils.general import (check_file, check_img_size, check_requirements, increment_path, non_max_suppression,
                            scale_coords)
-from utils.plots import Annotator
+from utils.plots import Annotator, colors
 from utils.torch_utils import select_device
 
 
@@ -56,7 +56,7 @@ def run(im,
     if im.shape[-1] == 3:
         im = im.transpose(2, 0, 1)
     im = torch.from_numpy(im).to(device)
-    im0 = im.cpu().numpy().copy()
+    im0 = im.cpu().numpy().copy().transpose(1, 2, 0)
     im = im.half() if half else im.float()  # uint8 to fp16/32
     im /= 255  # 0 - 255 to 0.0 - 1.0
     if len(im.shape) == 3:
@@ -73,19 +73,32 @@ def run(im,
         seen += 1
         gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
         imc = im0.copy() if save_crop else im0  # for save_crop
-        annotator = Annotator(im0, line_width=line_thickness, example=str(names))
+        annotator = Annotator(np.ascontiguousarray(im0), line_width=line_thickness, example=str(names))
         if len(det):
             # Rescale boxes from img_size to im0 size
             det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
 
-    return im0.transpose(1, 2, 0)
+            # Print results
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()  # detections per class
+
+            # Write results
+            for *xyxy, conf, cls in reversed(det):
+                if conf >= 0.0:
+                        c = int(cls)  # integer class
+                        label = f'{names[c]} {conf:.2f}'
+                        annotator.box_label(xyxy, label, color=colors(c, True))
+
+            # Stream results
+            im0 = annotator.result()
+
+    return im0
 
 
 def main():
     image = np.zeros([480, 720, 3])
     check_requirements(exclude=('tensorboard', 'thop'))
     image = run(im=image)
-    print(image.shape)
 
 
 if __name__ == "__main__":
