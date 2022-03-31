@@ -92,7 +92,7 @@ def run(im,
             # Stream results
             im0 = annotator.result()
 
-    return im0
+    return det.cpu().numpy(), im0
 
 
 def main():
