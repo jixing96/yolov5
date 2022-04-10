@@ -55,7 +55,7 @@ def run(im,
         classes=None,  # filter by class: --class 0, or --class 0 2 3
         agnostic_nms=False,  # class-agnostic NMS
         augment=False,  # augmented inference
-        line_thickness=3,  # bounding box thickness (pixels)
+        line_thickness=2,  # bounding box thickness (pixels)
         half=False  # use FP16 half-precision inference
         ):
 
@@ -79,7 +79,7 @@ def run(im,
     # Process predictions
     for i, det in enumerate(pred):  # per image
         seen += 1
-        annotator = Annotator(np.ascontiguousarray(im0), line_width=line_thickness, example=str(names))
+        annotator = Annotator(np.ascontiguousarray(im0), font_size=3, line_width=line_thickness, example=str(names))
                        
         if len(det):
             # Rescale boxes from img_size to im0 size
